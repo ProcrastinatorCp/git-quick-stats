@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+var=$(git -c log.showSignature=false shortlog $_since $_until --no-merges -n -s | sort -nr )
+
+var2=$(git -c log.showSignature=false shortlog --grep='Co-authored-by:' -s -n | sort -nr)
+
+echo "$var"
+echo ''
+echo "$var2"
+echo ''
+
+xxx="${var}\n${var2}"
+echo -e "${xxx}"
+echo ''
+
+#{ split($0,a," "); print a[0] a[1] a[2] a[3] a[4] a[5] }
+
+echo -e "${xxx}" | sort -nr | awk '
+  BEGIN { printf "holaaaa\n" }
+  { print $0; print $1; print index($0, $1) }
+  { args[NR] = $0; abc[NR] = $2; sum += $0 }
+  END {
+    for (i = 1; i <= NR; ++i) {
+      printf "%s,%2.1f%%\n", args[i], 100 * args[i] / sum
+    }
+  }' | column -t -s,
+
+#echo ''
+#echo "${var}
+#${var2}"
+#xx=$(comm -12 <(git -c log.showSignature=false shortlog $_since $_until --no-merges -n -s | sort -nr) <(git shortlog --grep='Co-authored-by:' -s -n | sort -nr))
+
+#echo $xx
+
+#echo "$var $var2"
